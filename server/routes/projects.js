@@ -4,16 +4,7 @@ const { verifyToken, isAdmin } = require('../middleware/auth');
 
 router.get('/', verifyToken, async (req, res) => {
     try {
-        let rows;
-        if (req.user.role === 'admin') {
-            [rows] = await db.query('SELECT * FROM projects');
-        } else {
-            [rows] = await db.query(
-                `SELECT p.* FROM projects p
-         JOIN project_members pm ON p.id = pm.project_id
-         WHERE pm.user_id = ?`, [req.user.id]
-            );
-        }
+        const [rows] = await db.query('SELECT * FROM projects');
         res.json(rows);
     } catch { res.status(500).json({ message: 'Server error' }); }
 });
